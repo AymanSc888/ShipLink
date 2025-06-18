@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/ShipLink/static/css/main.21238026.css",
+    "main.js": "/ShipLink/static/js/main.efdde6ac.js",
+    "index.html": "/ShipLink/index.html",
+    "main.21238026.css.map": "/ShipLink/static/css/main.21238026.css.map",
+    "main.efdde6ac.js.map": "/ShipLink/static/js/main.efdde6ac.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.21238026.css",
+    "static/js/main.efdde6ac.js"
+  ]
+}
