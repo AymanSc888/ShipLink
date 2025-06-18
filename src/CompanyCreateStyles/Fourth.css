@@ -1,0 +1,88 @@
+.AdditionalInfo-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f7fb;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.AdditionalInfo-container .form-section {
+  flex-grow: 1;
+  max-width: 700px;
+  background: #fff;
+  margin: 40px auto;
+  padding: 40px 50px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.AdditionalInfo-container h2 {
+  margin-bottom: 30px;
+  color: #222;
+  font-weight: 700;
+  text-align: center;
+}
+
+.AdditionalInfo-container textarea {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border-radius: 7px;
+  border: 1.7px solid #ccc;
+  font-size: 15px;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+
+.AdditionalInfo-container textarea:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 6px rgba(74,144,226,0.5);
+}
+
+.AdditionalInfo-container .file-label {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+}
+
+.AdditionalInfo-container input[type="file"] {
+  margin-bottom: 30px;
+}
+
+.AdditionalInfo-container .buttons-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.AdditionalInfo-container button {
+  flex: 1;
+  padding: 14px 0;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.AdditionalInfo-container .btn-next {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.AdditionalInfo-container .btn-next:hover {
+  background-color: #357ab8;
+}
+
+.AdditionalInfo-container .btn-skip {
+  background-color: #aaa;
+  color: white;
+}
+
+.AdditionalInfo-container .btn-skip:hover {
+  background-color: #888;
+}

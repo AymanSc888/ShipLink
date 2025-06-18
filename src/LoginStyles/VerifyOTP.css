@@ -1,0 +1,74 @@
+.verify-otp-container {
+  display: flex;
+  height: 100vh;
+}
+
+.verify-otp-container form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+.verify-otp-container label {
+  font-size: 14px;
+  color: #555;
+}
+
+.verify-otp-container input {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border 0.3s ease;
+}
+
+.verify-otp-container input:focus {
+  border-color: #1e88e5;
+  outline: none;
+}
+
+/* Button */
+.verify-otp-container .submit-btn {
+  padding: 12px;
+  background-color: #1e88e5;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.verify-otp-container .submit-btn:hover {
+  background-color: #1565c0;
+}
+
+.verify-otp-container .submit-btn:disabled {
+  background-color: #90caf9;
+  cursor: not-allowed;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .verify-otp-container {
+    flex-direction: column;
+  }
+
+  .left-side {
+    height: 40%;
+    padding: 30px 10px;
+  }
+
+  .right-side {
+    height: 60%;
+    padding: 20px;
+  }
+
+  .illustration {
+    max-width: 200px;
+  }
+}

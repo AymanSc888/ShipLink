@@ -1,0 +1,95 @@
+.sent-offers-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.sent-offers-container .status {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.sent-offers-container .status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.sent-offers-container .status.expired {
+  background-color: #fff1f0;
+  color: #dc3545;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* تحسين استجابة الموديل للأجهزة المحمولة */
+@media (max-width: 768px) {
+  .modal-content,
+  .edit-modal .modal-content {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .sent-offers-content {
+    padding: 1rem;
+  }
+
+  .offers-table {
+    display: block;
+  }
+
+  .offers-table thead {
+    display: none;
+  }
+
+  .offers-table tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+  }
+
+  .offers-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    text-align: right;
+  }
+
+  .offers-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #4a5568;
+    margin-left: 0.5rem;
+  }
+
+  .action-btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.sent-offers-container .no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #718096;
+}
+
+/* لتحسين عرض الجداول بشكل مرن */
+@media (max-width: 480px) {
+  .offers-table td {
+    font-size: 0.875rem;
+  }
+}

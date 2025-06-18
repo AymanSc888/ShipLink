@@ -1,0 +1,14 @@
+/* الشريط الجانبي ثابت في كل الصفحات */
+.CompanySidebar {
+  background: linear-gradient(
+    177.38deg,
+    #6315db 0.2%,
+    rgba(144, 29, 186, 0.835312) 49.97%,
+    rgba(236, 46, 118, 0.5) 143.94%
+  );
+  color: white;
+  width: 280px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  position: relative;
+  }

@@ -1,0 +1,80 @@
+.Documents-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f9fafb;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.Documents-container .form-section {
+  flex-grow: 1;
+  max-width: 600px;
+  background: white;
+  margin: 40px auto;
+  padding: 40px 50px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+}
+
+.Documents-container h2 {
+  margin-bottom: 30px;
+  font-weight: 700;
+  font-size: 28px;
+  color: #333;
+  text-align: center;
+}
+
+.Documents-container .input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 22px;
+}
+
+.Documents-container label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+  font-size: 16px;
+}
+
+.Documents-container input[type="file"] {
+  padding: 8px;
+  border: 1.5px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.Documents-container input[type="file"]:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+.Documents-container input.error {
+  border-color: #e74c3c;
+  background-color: #ffe6e6;
+}
+
+.Documents-container .error-text {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.Documents-container button {
+  width: 100%;
+  background-color: #4a90e2;
+  color: white;
+  padding: 14px 0;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.Documents-container button:hover {
+  background-color: #357ab8;
+}

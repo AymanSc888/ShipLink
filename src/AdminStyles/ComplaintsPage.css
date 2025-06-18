@@ -1,0 +1,72 @@
+/* Container */
+.complaint-container {
+   display: flex;
+  background-color: #f5f7fa;
+  height: 100vh;
+}
+.search-bar:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Tabs */
+.tabs {
+  margin-bottom: 15px;
+}
+
+.tab {
+  background: #eee;
+  border: none;
+  padding: 8px 16px;
+  margin-right: 10px;
+  font-size: 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.3s;
+  color: #555;
+}
+
+.tab:hover {
+  background: #ddd;
+}
+
+.tab.active {
+  background: #007bff;
+  color: #fff;
+}
+
+/* Type filter dropdown */
+.type-filter {
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  margin-left: 100px;
+  border-radius: 6px;
+  border: 1.5px solid #ccc;
+  font-size: 15px;
+  cursor: pointer;
+  width: 220px;
+}
+/* Status badges */
+.status {
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.status.open {
+  background-color: #ffc107;
+  color: #6a4f00;
+}
+
+.status.resolved {
+  background-color: #28a745;
+  color: #e6f4ea;
+}
+/* Status dropdown in modal */
+.status-dropdown {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1.5px solid #ccc;
+}

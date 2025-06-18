@@ -1,0 +1,41 @@
+.completed-orders-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+/* Responsive styles */
+@media (max-width: 768px) {
+  .completed-orders-content {
+    padding: 1rem;
+  }
+
+  .orders-table {
+    display: block;
+  }
+
+  .orders-table thead {
+    display: none;
+  }
+
+  .orders-table tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 0.375rem;
+  }
+
+  .orders-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    text-align: right;
+  }
+
+  .orders-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #495057;
+    margin-right: 1rem;
+  }
+}

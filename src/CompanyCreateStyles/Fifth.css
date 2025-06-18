@@ -1,0 +1,109 @@
+/* Container and layout */
+.PasswordSetup-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Form container */
+.password-form {
+  flex: 1;
+  width: 580px;
+  margin: 40px auto;
+  padding: 30px 40px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Heading */
+.password-form h2 {
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+/* Inputs and select */
+.password-form input[type="password"],
+.password-form select {
+  padding: 12px 15px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.password-form input[type="password"]:focus,
+.password-form select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Error message */
+.error {
+  color: #d9534f;
+  font-weight: 500;
+  font-size: 14px;
+  margin-top: -10px;
+}
+
+/* Submit button */
+.password-form button {
+  padding: 12px 20px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.password-form button:disabled {
+  background-color: #5a9bf8;
+  cursor: not-allowed;
+}
+
+.password-form button:not(:disabled):hover {
+  background-color: #0056b3;
+}
+
+/* Modal overlay */
+.PasswordSetup-container .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Modal content */
+.PasswordSetup-container .modal-content {
+  background-color: white;
+  padding: 30px 40px;
+  border-radius: 10px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.PasswordSetup-container .modal-content h3 {
+  margin-bottom: 15px;
+  color: #28a745;
+  font-weight: 700;
+}
+
+.PasswordSetup-container .modal-content p {
+  font-size: 16px;
+  color: #444;
+}
