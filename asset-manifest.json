@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/ShipLink/static/css/main.21238026.css",
-    "main.js": "/ShipLink/static/js/main.259503f1.js",
+    "main.js": "/ShipLink/static/js/main.ca968e23.js",
     "index.html": "/ShipLink/index.html",
     "main.21238026.css.map": "/ShipLink/static/css/main.21238026.css.map",
-    "main.259503f1.js.map": "/ShipLink/static/js/main.259503f1.js.map"
+    "main.ca968e23.js.map": "/ShipLink/static/js/main.ca968e23.js.map"
   },
   "entrypoints": [
     "static/css/main.21238026.css",
-    "static/js/main.259503f1.js"
+    "static/js/main.ca968e23.js"
   ]
 }
