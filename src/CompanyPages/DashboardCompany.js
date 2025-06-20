@@ -222,7 +222,7 @@ const stats = [
             </div>
 
             <div className="profile">
-              <img src={profileImage || "/profile.jpg"} alt="Company" />
+              <img src={`${process.env.PUBLIC_URL}/profile.jpg`} alt="Company" />
               <span>{companyName}</span>
             </div>
           </div>

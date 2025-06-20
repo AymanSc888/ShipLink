@@ -43,7 +43,11 @@ const SidebarAdmin = () => {
         </div>
 
         <div className="logo-container">
-          <img src="/ship-smart.jpg" alt="logo" className="logo" />
+          <img
+            src={`${process.env.PUBLIC_URL}/ship-smart.jpg`}
+            alt="logo"
+            className="logo"
+          />
         </div>
 
         <ul className="menu">

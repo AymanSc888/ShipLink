@@ -62,8 +62,9 @@ const ResetPassword = () => {
   return (
     <div className="reset-password-container">
       <div className="left-side">
-        <img src="/ship-smart.jpg" alt="Logo" className="logo" />
-        <img src="/boy.png" alt="Reset illustration" className="illustration" />
+       <img src={`${process.env.PUBLIC_URL}/ship-smart.jpg`} alt="illustration logo" className="logo" />
+<img src={`${process.env.PUBLIC_URL}/boy.png`} alt="illustration" className="illustration" />
+
       </div>
 
       <div className="right-side">

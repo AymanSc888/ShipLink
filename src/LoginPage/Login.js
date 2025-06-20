@@ -161,8 +161,8 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="left-side">
-        <img src="/ship-smart.jpg" alt="Shipping Logo" className="logo" />
-        <img src="/Truck.png" alt="Shipping Truck" className="truck-image" />
+<img src={`${process.env.PUBLIC_URL}/ship-smart.jpg`} alt="Shipping Logo" className="logo" />
+<img src={`${process.env.PUBLIC_URL}/Truck.png`} alt="Shipping Truck" className="truck-image"  />
         <h5 className="tagline">"Ship smarter, ship faster"</h5>
       </div>
 

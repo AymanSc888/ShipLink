@@ -1,5 +1,5 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./LoginPage/Login";
 import ForgetPassword from "./LoginPage/ForgetPassword";
 import VerifyOTP from "./LoginPage/VerifyOTP";
@@ -25,14 +25,14 @@ import { CompanyProvider } from "./CompanyCreatePages/CompanyContext";
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter basename="/ShipLink">
       <Routes>
-        {/* صفحات خارج إنشاء الشركة */}
-        <Route path="/" element={<Login />} />
+        <Route path="/ShipLink" element={<Navigate to="/" />} />
+  <Route path="/" element={<Login />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-<Route path="/dashboard-company" element={<DashboardCompany />} />
+        <Route path="/dashboard-company" element={<DashboardCompany />} />
         <Route path="/new-orders" element={<NewOrders />} />
         <Route path="/create-offer/:orderId" element={<CreateOffer />} />
         <Route path="/offers-sent" element={<OffersSent />} />
@@ -46,7 +46,6 @@ function App() {
         <Route path="/payment" element={<Payment />} />
         <Route path="/settings" element={<Settings />} />
 
-        {/* تغليف صفحات إنشاء الشركة داخل Provider */}
         <Route
           path="/first"
           element={
@@ -80,7 +79,7 @@ function App() {
           }
         />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
 

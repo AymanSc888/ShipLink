@@ -1,71 +1,68 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import "../CompanyStyles/InProgressOrders.css";
 import { jwtDecode } from "jwt-decode";
-import * as signalR from "@microsoft/signalr";
 
-const AcceptedOffers = () => {
+const InProgressOrders = () => {
   const navigate = useNavigate();
-  const [offers, setOffers] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [shippingOrder, setShippingOrder] = useState(null);
+  const [confirmShipModal, setConfirmShipModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const [chatVisible, setChatVisible] = useState(false);
-  const [chatRoomId, setChatRoomId] = useState(null);
-  const [messageInput, setMessageInput] = useState("");
-  const [messages, setMessages] = useState([]);
-  const connectionRef = useRef(null);
-  const tokenRef = useRef("");
-
-  // ✅ Get Token on mount
   useEffect(() => {
-    const storedUser =
-      JSON.parse(localStorage.getItem("user")) ||
-      JSON.parse(sessionStorage.getItem("user"));
-
-    if (storedUser?.token) tokenRef.current = storedUser.token;
-  }, []);
-
-  // ✅ Fetch accepted offers
-  useEffect(() => {
-    const fetchOffers = async () => {
+    const fetchOrders = async () => {
       setLoading(true);
       try {
-        const token = tokenRef.current;
-        const decoded = jwtDecode(token);
-        if (decoded.exp < Date.now() / 1000) {
-          setError("Session expired. Please login again.");
+        const storedUser =
+          JSON.parse(localStorage.getItem("user")) ||
+          JSON.parse(sessionStorage.getItem("user"));
+
+        if (!storedUser?.token) {
+          setError("User not authenticated.");
           return;
         }
 
-        const response = await fetch("http://shippinganddelivery.runasp.net/api/offers", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const decoded = jwtDecode(storedUser.token);
+        const currentTime = Date.now() / 1000;
+        if (decoded.exp < currentTime) {
+          setError("Session expired. Please login again.");
+          setTimeout(() => navigate("/login"), 2000);
+          return;
+        }
 
-        if (!response.ok) throw new Error("Failed to fetch offers");
-        const result = await response.json();
-        const offersData = result.data || result;
+        const [res1, res2] = await Promise.all([
+          fetch("http://shippinganddelivery.runasp.net/api/orders?status=PendingPayment", {
+            headers: { Authorization: `Bearer ${storedUser.token}` },
+          }),
+          fetch("http://shippinganddelivery.runasp.net/api/orders?status=Placed", {
+            headers: { Authorization: `Bearer ${storedUser.token}` },
+          }),
+        ]);
 
-        const accepted = offersData.filter(
-          (offer) => offer.status?.toLowerCase() === "accepted"
-        );
+        if (!res1.ok || !res2.ok) throw new Error("Failed to fetch orders");
 
-        const mapped = accepted.map((offer) => ({
-          id: offer.id,
-          orderId: offer.orderId,
-          price: offer.price ? `${offer.price} EGP` : "N/A",
-          status: offer.status,
-          companyName: offer.companyName || "Unknown",
-          date: new Date(offer.createdAtUtc).toLocaleDateString(),
+        const data1 = await res1.json();
+        const data2 = await res2.json();
+        const allOrders = [...(data1.data || data1), ...(data2.data || data2)];
+
+        const mapped = allOrders.map((order) => ({
+          id: order.id,
+          customer: order.ownerName || "Unknown",
+          from: order.pickupLocation,
+          to: order.destination,
+          date: new Date(order.createdAtUtc).toLocaleDateString(),
+          status: order.status,
+          price: order.price || "N/A",
+          trackingNumber: order.trackingNumber || "N/A",
         }));
 
-        setOffers(mapped);
+        setOrders(mapped);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -73,177 +70,187 @@ const AcceptedOffers = () => {
       }
     };
 
-    fetchOffers();
-  }, []);
+    fetchOrders();
+  }, [navigate]);
 
-  // ✅ Chat connection setup
-  useEffect(() => {
-    if (!chatRoomId || !chatVisible || !tokenRef.current) return;
+  const filteredOrders = orders.filter((order) =>
+    order.id.toString().includes(searchTerm) ||
+    order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.trackingNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.to.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.from.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-    const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://shippinganddelivery.runasp.net/hubs/chat", {
-        accessTokenFactory: () => tokenRef.current,
-      })
-      .withAutomaticReconnect()
-      .build();
-
-    connection
-      .start()
-      .then(() => {
-        console.log("SignalR connected.");
-        connection.invoke("JoinRoom", chatRoomId);
-      })
-      .catch((err) => console.error("Connection failed:", err));
-
-    connection.on("ReceiveMessage", (user, message) => {
-      setMessages((prev) => [...prev, { user, message }]);
-    });
-
-    connectionRef.current = connection;
-
-    return () => {
-      if (connectionRef.current) {
-        connectionRef.current.invoke("LeaveRoom", chatRoomId).catch(() => {});
-        connectionRef.current.stop();
-        connectionRef.current = null;
-      }
-    };
-  }, [chatRoomId, chatVisible]);
-
-  // ✅ Send message
-  const sendMessage = async () => {
-    if (messageInput && connectionRef.current) {
-      try {
-        await connectionRef.current.invoke("SendMessageToRoom", chatRoomId, messageInput);
-        setMessages((prev) => [...prev, { user: "You", message: messageInput }]);
-        setMessageInput("");
-      } catch (err) {
-        console.error("Send message error:", err);
-      }
+  const getStatusLabel = (status) => {
+    switch (status?.trim().toLowerCase()) {
+      case "in-transit":
+        return { text: "In Transit", class: "in-transit" };
+      case "preparing":
+        return { text: "Preparing", class: "preparing" };
+      case "placed":
+        return { text: "Placed", class: "placed" };
+      case "pending":
+        return { text: "Pending", class: "pending" };
+      case "pendingpayment":
+        return { text: "Pending Payment", class: "pending-payment" };
+      case "shipped":
+        return { text: "Shipped", class: "shipped" };
+      default:
+        return { text: status, class: "unknown" };
     }
   };
-
-  const filteredOffers = offers.filter(
-    (offer) =>
-      offer.id.toString().includes(searchTerm) ||
-      offer.orderId?.toString().includes(searchTerm) ||
-      offer.companyName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="in-progress-container">
       <Sidebar />
       <div className="content">
-        <h1 className="title">Accepted Offers</h1>
+        <h1 className="title">InProgress Orders</h1>
 
-        {loading && <p>Loading offers...</p>}
+        {loading && <p>Loading orders...</p>}
         {error && <p className="error">{error}</p>}
 
         <div className="table-container">
           <input
             type="text"
-            placeholder="Search by Offer ID or Company"
+            placeholder="Search by Order ID or Customer"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-bar"
           />
           <i className="fas fa-search search-icon"></i>
 
-          {filteredOffers.length === 0 ? (
+          {filteredOrders.length === 0 ? (
             <div className="no-results">
-              <i className="fas fa-box-open"></i>
-              <p>No accepted offers found</p>
+              <i className="fas fa-truck"></i>
+              <p>No orders in progress found</p>
             </div>
           ) : (
             <table>
               <thead>
                 <tr>
-                  <th>Offer ID</th>
                   <th>Order ID</th>
-                  <th>Company</th>
+                  <th>Customer</th>
+                  <th>Destination</th>
+                  <th>Shipment Date</th>
                   <th>Price</th>
-                  <th>Date</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredOffers.map((offer) => (
-                  <tr key={offer.id}>
-                    <td>{offer.id}</td>
-                    <td>{offer.orderId}</td>
-                    <td>{offer.companyName}</td>
-                    <td>{offer.price}</td>
-                    <td>{offer.date}</td>
-                    <td>
-                      <span className="status accepted">Accepted</span>
-                    </td>
-                    <td>
-                      <div className="action-buttons">
+                {filteredOrders.map((order) => {
+                  const status = getStatusLabel(order.status);
+                  const isPlaced = order.status?.trim().toLowerCase() === "placed";
+
+                  return (
+                    <tr key={order.id}>
+                      <td>{order.id}</td>
+                      <td>{order.customer}</td>
+                      <td>{order.from} → {order.to}</td>
+                      <td>{order.date}</td>
+                      <td>{order.price === "N/A" ? "N/A" : `${order.price} EGP`}</td>
+                      <td>
+                        <span className={`status ${status.class}`}>
+                          {status.text}
+                        </span>
+                      </td>
+                      <td>
                         <button
                           className="view-btn"
                           onClick={() => {
-                            setSelectedOffer(offer);
+                            setSelectedOrder(order);
                             setShowModal(true);
                           }}
                         >
                           <i className="fas fa-eye"></i> View
                         </button>
                         <button
-                          className="chat-btn"
+                          className={`ship-btn ${!isPlaced ? "disabled" : ""}`}
                           onClick={() => {
-                            setMessages([]);
-                            setChatRoomId(offer.orderId);
-                            setChatVisible(true);
+                            if (isPlaced) {
+                              setShippingOrder(order);
+                              setConfirmShipModal(true);
+                            }
                           }}
+                          disabled={!isPlaced}
                         >
-                          <i className="fas fa-phone"></i> Contact
+                          <i className="fas fa-shipping-fast"></i> Ship
                         </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           )}
         </div>
       </div>
 
-      {/* Offer Modal */}
-      {showModal && selectedOffer && (
+      {/* View Modal */}
+      {showModal && selectedOrder && (
         <div className="custom-modal-overlay">
           <div className="modal-content">
-            <h2>Offer Details</h2>
-            <p><strong>Offer ID:</strong> {selectedOffer.id}</p>
-            <p><strong>Order ID:</strong> {selectedOffer.orderId}</p>
-            <p><strong>Company:</strong> {selectedOffer.companyName}</p>
-            <p><strong>Price:</strong> {selectedOffer.price}</p>
-            <p><strong>Status:</strong> {selectedOffer.status}</p>
-            <button className="close-btn" onClick={() => setShowModal(false)}>Close</button>
+            <h2>Tracking Information</h2>
+            <p><strong>Order ID:</strong> {selectedOrder.id}</p>
+            <p><strong>Customer:</strong> {selectedOrder.customer}</p>
+            <p><strong>From:</strong> {selectedOrder.from}</p>
+            <p><strong>To:</strong> {selectedOrder.to}</p>
+            <p><strong>Tracking Number:</strong> {selectedOrder.trackingNumber}</p>
+            <button className="close-btn" onClick={() => setShowModal(false)}>
+              Close
+            </button>
           </div>
         </div>
       )}
 
-      {/* Chat Modal */}
-      {chatVisible && (
+      {/* Ship Confirmation Modal */}
+      {confirmShipModal && shippingOrder && (
         <div className="custom-modal-overlay">
-          <div className="modal-content chat-modal">
-            <h2>Chat Room: {chatRoomId}</h2>
-            <div className="chat-body" style={{ maxHeight: "300px", overflowY: "auto" }}>
-              {messages.map((msg, idx) => (
-                <p key={idx}><strong>{msg.user}:</strong> {msg.message}</p>
-              ))}
-            </div>
-            <div className="chat-input">
-              <input
-                type="text"
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                placeholder="Type a message..."
-              />
-              <button onClick={sendMessage}>Send</button>
-              <button className="close-btn" onClick={() => setChatVisible(false)}>Close</button>
-            </div>
+          <div className="modal-content">
+            <h2>Confirm Shipment</h2>
+            <p>Do you want to mark this order as <strong>Shipped</strong> and send it to the driver?</p>
+            <button
+              className="Edit-btn"
+              onClick={async () => {
+                try {
+                  const storedUser =
+                    JSON.parse(localStorage.getItem("user")) ||
+                    JSON.parse(sessionStorage.getItem("user"));
+                  const response = await fetch(
+                    `http://shippinganddelivery.runasp.net/api/orders/${shippingOrder.id}`,
+                    {
+                     method: "PATCH"
+,
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${storedUser.token}`,
+                      },
+                      body: JSON.stringify({ status: "Shipped" }),
+                    }
+                  );
+
+                  if (!response.ok) throw new Error("Failed to update order status");
+
+                  setOrders((prev) =>
+                    prev.map((o) =>
+                      o.id === shippingOrder.id
+                        ? { ...o, status: "Shipped" }
+                        : o
+                    )
+                  );
+
+                  setConfirmShipModal(false);
+                  setShippingOrder(null);
+                } catch (err) {
+                  alert("Error: " + err.message);
+                }
+              }}
+            >
+              Yes, Ship it
+            </button>
+            <button className="close-btn" onClick={() => setConfirmShipModal(false)}>
+              Cancel
+            </button>
           </div>
         </div>
       )}
@@ -251,4 +258,4 @@ const AcceptedOffers = () => {
   );
 };
 
-export default AcceptedOffers;
+export default InProgressOrders;

@@ -142,4 +142,49 @@
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .left-side {
+    align-items: center;
+    text-align: center;
+  }
+
+  .left-side .truck-image {
+    position: static;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+
+  .left-side .tagline {
+    font-size: 20px;
+    width: auto;
+  }
+
+  .login-box {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    padding: 15px;
+  }
+
+  .left-side .tagline {
+    font-size: 16px;
+  }
+
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .forgot-password {
+    align-self: flex-end;
+    margin-top: 10px;
+  }
+}
 

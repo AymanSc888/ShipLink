@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar";
 import "../CompanyStyles/InProgressOrders.css";
 import { jwtDecode } from "jwt-decode";
 
-const InProgress = () => {
+const Delivered = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,7 +34,7 @@ const InProgress = () => {
         }
 
         const response = await fetch(
-          "http://shippinganddelivery.runasp.net/api/orders?status=placed",
+          "http://shippinganddelivery.runasp.net/api/orders?status=Delivered",
           {
             headers: {
               Authorization: `Bearer ${storedUser.token}`,
@@ -49,11 +49,11 @@ const InProgress = () => {
         const result = await response.json();
         const ordersData = result.data || result;
 
-        const Placed = ordersData.filter((order) =>
-          ["placed"].includes(order.status?.toLowerCase())
+        const Delivered = ordersData.filter((order) =>
+          ["delivered"].includes(order.status?.toLowerCase())
         );
 
-        const mapped = Placed.map((order) => ({
+        const mapped = Delivered.map((order) => ({
           id: order.id,
           customer: order.ownerName || "Unknown",
           from: order.pickupLocation,
@@ -61,6 +61,7 @@ const InProgress = () => {
           date: new Date(order.createdAtUtc).toLocaleDateString(),
           status: order.status,
           trackingNumber: order.trackingNumber || "TRK-UNKNOWN",
+          price: order.price || "N/A", // أضف دي
         }));
 
         setOrders(mapped);
@@ -98,7 +99,7 @@ const InProgress = () => {
     <div className="in-progress-container">
       <Sidebar />
       <div className="content">
-        <h1 className="title">Orders In Progress</h1>
+        <h1 className="title">Delivered Orders</h1>
 
         {loading && <p>Loading orders...</p>}
         {error && <p className="error">{error}</p>}
@@ -126,6 +127,7 @@ const InProgress = () => {
                   <th>Customer</th>
                   <th>Destination</th>
                   <th>Shipment Date</th>
+                  <th>Price</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
@@ -141,29 +143,23 @@ const InProgress = () => {
                         {order.from} → {order.to}
                       </td>
                       <td>{order.date}</td>
+                      <td>{order.price} EGP</td>
+
                       <td>
                         <span className={`status ${status.class}`}>
                           {status.text}
                         </span>
                       </td>
                       <td>
-                        <div className="action-buttons">
-                          <button
-                            className="view-btn"
-                            onClick={() => {
-                              setSelectedOrder(order);
-                              setShowModal(true);
-                            }}
-                          >
-                            <i className="fas fa-map-marker-alt"></i> Track
-                          </button>
-                          <button
-                            className="chat-btn"
-                            onClick={() => navigate(`/chat-company`)}
-                          >
-                            <i className="fas fa-phone"></i> Contact
-                          </button>
-                        </div>
+                        <button
+                          className="view-btn"
+                          onClick={() => {
+                            setSelectedOrder(order);
+                            setShowModal(true);
+                          }}
+                        >
+                          <i className="fas fa-eye"></i> View
+                        </button>
                       </td>
                     </tr>
                   );
@@ -203,4 +199,4 @@ const InProgress = () => {
   );
 };
 
-export default InProgress;
+export default Delivered;

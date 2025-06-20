@@ -147,7 +147,7 @@ const Header = () => {
             style={{ cursor: "pointer" }}
             title={companyName || "Admin"}
           >
-            <img src={profileImage || "/profile.jpg"} alt="Company" />
+            <img src={`${process.env.PUBLIC_URL}/profile.jpg`} alt="Company" />
             <span>{companyName || "Admin"}</span>
           </div>
         </div>

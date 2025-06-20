@@ -54,7 +54,11 @@ const Sidebar = () => {
         {isCollapsed ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />}
       </div>
 
-      <img src="/ship-smart.jpg" alt="logo" className="logo" />
+<img
+  src={`${process.env.PUBLIC_URL}/ship-smart.jpg`}
+  alt="logo"
+  className="logo"
+/>
 
 <ul className="menu">
   <li className={location.pathname === "/dashboard-company" ? "active" : ""}>

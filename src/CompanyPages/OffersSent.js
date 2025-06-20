@@ -10,6 +10,7 @@ const SentOffers = () => {
   const [error, setError] = useState(null);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("All");
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -46,8 +47,8 @@ const SentOffers = () => {
         const result = await res.json();
         const offersData = result.data || result;
 
-        const transformed = offersData
-  .filter((o) => o.status === "Pending") 
+       const transformed = offersData
+  .filter((o) => o.status === "Pending" || o.status === "Expired")
   .map((o) => ({
     offerId: o.id,
     orderId: o.orderId,
@@ -58,7 +59,6 @@ const SentOffers = () => {
     date: o.createdAtUtc,
   }));
 
-setOffers(transformed);
 
         setOffers(transformed);
       } catch (err) {
@@ -71,12 +71,16 @@ setOffers(transformed);
     fetchOffers();
   }, []);
 
-  const filteredOffers = offers.filter(
-    (offer) =>
-      offer.offerId?.toString().includes(search) ||
-      offer.orderId?.toString().includes(search) ||
-      offer.customer?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredOffers = offers
+    .filter((offer) =>
+      statusFilter === "All" ? true : offer.status === statusFilter
+    )
+    .filter(
+      (offer) =>
+        offer.offerId?.toString().includes(search) ||
+        offer.orderId?.toString().includes(search) ||
+        offer.customer?.toLowerCase().includes(search.toLowerCase())
+    );
 
   const getStatusClass = (status) => {
     switch (status.toLowerCase()) {
@@ -96,7 +100,8 @@ setOffers(transformed);
 
   const formatDate = (dateString) => {
     try {
-      return new Date(dateString).toLocaleDateString();
+      const date = new Date(dateString);
+      return date.toLocaleString();
     } catch {
       return dateString;
     }
@@ -111,7 +116,7 @@ setOffers(transformed);
         {loading && <p>Loading offers...</p>}
         {error && <p className="error">{error}</p>}
 
-        <div className="table-container">
+        <div className="table-controls">
           <input
             type="text"
             placeholder="Search by Offer ID, Order ID or Customer"
@@ -119,6 +124,19 @@ setOffers(transformed);
             onChange={(e) => setSearch(e.target.value)}
             className="search-bar"
           />
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="status-filter"
+          >
+            <option value="All">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Expired">Expired</option>
+          </select>
+        </div>
+
+        <div className="table-container">
           <table>
             <thead>
               <tr>
@@ -139,8 +157,8 @@ setOffers(transformed);
                     <td>{offer.offerId}</td>
                     <td>{offer.orderId}</td>
                     <td>{offer.customer}</td>
-                    <td>{offer.price}</td>
-                    <td>{offer.duration}</td>
+                    <td>{offer.price} EGP</td>
+                    <td>{offer.duration} days</td>
                     <td>
                       <span className={`status ${getStatusClass(offer.status)}`}>
                         {offer.status.charAt(0).toUpperCase() + offer.status.slice(1)}
@@ -148,14 +166,18 @@ setOffers(transformed);
                     </td>
                     <td>{formatDate(offer.date)}</td>
                     <td>
-                      <button onClick={() => handleViewClick(offer)} className="view-btn">View</button>
+                      <button onClick={() => handleViewClick(offer)} className="view-btn">
+                        View
+                      </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td colSpan="8" style={{ textAlign: "center" }}>
-                    No offers found matching your search
+                    {search || statusFilter !== "All"
+                      ? "No offers found matching your filters."
+                      : "No offers sent yet."}
                   </td>
                 </tr>
               )}
@@ -164,19 +186,26 @@ setOffers(transformed);
         </div>
 
         {selectedOffer && !isEditing && (
-          <div className="custom-modal-overlay">
+          <div
+            className="custom-modal-overlay"
+            onClick={(e) => {
+              if (e.target.className === "custom-modal-overlay") {
+                setSelectedOffer(null);
+              }
+            }}
+          >
             <div className="modal-content">
+              <button onClick={() => setSelectedOffer(null)} className="close-btn">
+                ×
+              </button>
               <h2>Offer Details</h2>
               <p><strong>Offer ID:</strong> {selectedOffer.offerId}</p>
               <p><strong>Order ID:</strong> {selectedOffer.orderId}</p>
               <p><strong>Customer:</strong> {selectedOffer.customer}</p>
-              <p><strong>Price:</strong> {selectedOffer.price}</p>
-              <p><strong>Duration:</strong> {selectedOffer.duration}</p>
+              <p><strong>Price:</strong> {selectedOffer.price} EGP</p>
+              <p><strong>Duration:</strong> {selectedOffer.duration} days</p>
               <p><strong>Status:</strong> {selectedOffer.status}</p>
               <p><strong>Date:</strong> {formatDate(selectedOffer.date)}</p>
-              <button onClick={() => setSelectedOffer(null)} className="close-btn">
-                Close
-              </button>
             </div>
           </div>
         )}
